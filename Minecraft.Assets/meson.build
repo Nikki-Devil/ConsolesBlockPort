@@ -5,10 +5,10 @@
 
 client_platform_path = meson.project_source_root() / 'Minecraft.Client/Platform'
 
-install_subdir(meson.current_source_dir() / 'music', install_dir : '')
-install_subdir(meson.current_source_dir() / 'res', install_dir : 'Common')
-install_subdir(meson.current_source_dir() / 'font', install_dir : 'Common/Media')
-install_data(meson.current_source_dir() / 'levels/TrialLevel.mcs', install_dir : 'Common/Trial')
+install_subdir(meson.current_source_dir() / 'Common/music', install_dir : '')
+install_subdir(meson.current_source_dir() / 'Common/res', install_dir : 'Common')
+install_subdir(meson.current_source_dir() / 'Common/font', install_dir : 'Common/Media')
+install_data(meson.current_source_dir() / 'Common/levels/TrialLevel.mcs', install_dir : 'Common/Trial')
 
 install_subdir(client_platform_path / 'Durango/Sound', install_dir : 'Durango')
 # install_subdir(client_platform_path / 'Windows64Media/DLC', install_dir : 'Windows64Media')
@@ -33,7 +33,7 @@ localisation = custom_target('Minecraft.Assets_Localisation',
 
 colour_table = custom_target('Minecraft.Assets_Colour_Table',
   output : 'HTMLColours.col',
-  input : meson.current_source_dir() / 'HTMLColours.xml',
+  input : meson.current_source_dir() / 'Common/HTMLColours.xml',
   command : [
     'python3', meson.project_source_root() / 'scripts/build_col.py',
     '@INPUT@',
@@ -41,14 +41,15 @@ colour_table = custom_target('Minecraft.Assets_Colour_Table',
   ]
 )
 
-movies_path = meson.current_source_dir() / 'movies'
+movies_path = meson.current_source_dir() / 'Common/movies'
+
 archive_sources = [ 
   localisation[0], # client_platform_path / 'Windows64Media/Media/languages.loc',
   colour_table,
-  meson.current_source_dir() / 'splashes.txt',
-  meson.current_source_dir() / 'graphics\SaveChest.png',
-  meson.current_source_dir() / 'graphics\MinecraftIcon.png',
-  meson.current_source_dir() / 'graphics\TexturePackIcon.png',
+  meson.current_source_dir() / 'Common/splashes.txt',
+  meson.current_source_dir() / 'Common/graphics/SaveChest.png',
+  meson.current_source_dir() / 'Common/graphics/MinecraftIcon.png',
+  meson.current_source_dir() / 'Common/graphics/TexturePackIcon.png',
   client_platform_path / 'Windows64Media/Media/Tutorial.pck',
   client_platform_path / 'Windows64Media/Media/skinWin.swf',
   client_platform_path / 'Windows64Media/Media/skinHDWin.swf',

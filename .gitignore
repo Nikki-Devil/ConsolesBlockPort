@@ -35,7 +35,7 @@ compile_commands.json
 
 # ----- Runtime-created symlinks / scratch -----
 # Asset symlink created at runtime for working directory resolution
-Common
+# Common
 
 # ----- Scratch / legacy -----
 oldimpl/
