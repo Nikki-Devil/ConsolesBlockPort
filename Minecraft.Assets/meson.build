@@ -5,9 +5,7 @@
 
 client_platform_path = meson.project_source_root() / 'Minecraft.Client/Platform'
 
-install_subdir(meson.current_source_dir() / 'Common', install_dir : 'Common')
-install_subdir(client_platform_path / 'Durango/Sound', install_dir : 'Durango')
-install_subdir(client_platform_path / 'DurangoMedia/DLC', install_dir : 'Windows64Media') # Use this just for funsies so we get access to more dlc
+install_subdir(meson.current_source_dir() / 'Common', install_dir : get_option('prefix'))
 
 #
 # Asset build
@@ -410,15 +408,15 @@ archive_sources_moviesVita = [
 ]
 
 assets_archive = custom_target('Minecraft.Assets_Archive',
-  output : 'MediaWindows64.arc',
+  output : 'MediaLinux.arc',
   input : archive_sources + archive_sources_movies1080 + archive_sources_movies720,
   command : [
     'python3', meson.project_source_root() / 'scripts/pack_arc.py',
     '@OUTPUT@',
     '@INPUT@'
   ],
-  install : true,
   install_dir : 'Common/Media',
+  install : true,
   # build_subdir : 'Common/Media',
   build_by_default : true
 )
