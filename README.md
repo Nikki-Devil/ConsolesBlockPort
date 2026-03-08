@@ -127,13 +127,12 @@ meson setup build
 
 ## Running
 
-In order to run the compiled binary, you must obtain a copy of a Windows64 build `Common` folder containing compiled media assets. The `Common` folder should be placed at the current working directory when you run the `Minecraft.Client` executable.
+In order to run the compiled binary, you have a compiled copy of the game's assets in your current working directory. These assets are automatically copied to the `Minecraft.Client` folder in your build directory. To run the game, your current working directory must be in this folder.
 
-At this time, we don't have the necessary tools to build game resources without Visual Studio, so for the time being these can be obtained from the latest [MinecraftConsoles nightly](https://github.com/smartcmd/MinecraftConsoles/releases/tag/nightly).
-
-1. Download `LCEWindows64.zip` and extract.
-2. Copy the `Common` directory to your current working directory.
-3. Run `Minecraft.Client`.
+```sh
+cd build/Minecraft.Client
+./Minecraft.Client
+```
 
 ---
 

@@ -12,7 +12,7 @@ lib_profile = static_library('4J_Profile',
   profile_sources,
   include_directories : include_directories('.'),
   cpp_args : global_cpp_args + global_cpp_defs + [
-    '-include', meson.current_source_dir() / 'stdafx.h',
+    '-include', 'stdafx.h',
   ],
 )
 

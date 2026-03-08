@@ -10,7 +10,7 @@ lib_storage = static_library('4J_Storage',
   storage_sources,
   include_directories : include_directories('.'),
   cpp_args : global_cpp_args + global_cpp_defs + [
-    '-include', meson.current_source_dir() / 'stdafx.h',
+    '-include', 'stdafx.h',
   ],
 )
 

@@ -45,7 +45,7 @@ if host_machine.system() == 'linux'
   ).stdout().strip().split('\n')
 endif
 
-executable('Minecraft.Client',
+client = executable('Minecraft.Client',
   client_sources + platform_sources + localisation[1],
   include_directories : include_directories('Platform'),
   dependencies : [
@@ -69,4 +69,21 @@ executable('Minecraft.Client',
   c_args   : global_cpp_defs + ['-DUNICODE', '-D_UNICODE'],
   install  : true,
   install_dir : ''
+)
+
+# To support actually running the client from the build folder, we need to
+# copy the generated assets from Minecraft.Assets into the working directory
+# of the client.
+custom_target('copy_assets_to_client',
+  input: [client, media_archive],
+  output: 'assets.stamp', # using a stamp file to avoid copying assets every time
+  command : [
+    python, meson.project_source_root() / 'scripts/copy_assets_to_client.py',
+    meson.project_source_root(),
+    meson.build_root(),
+    meson.current_build_dir(),
+    '@INPUT1@',
+    '@OUTPUT@',
+  ],
+  build_by_default: true,
 )
