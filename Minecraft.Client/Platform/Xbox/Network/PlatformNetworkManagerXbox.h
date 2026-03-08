@@ -3,9 +3,9 @@ using namespace std;
 #include <vector>
 #include <qnet.h>
 #include "../../../../Minecraft.World/Util/C4JThread.h"
-#include "../../../Build/Common/Network/NetworkPlayerInterface.h"
-#include "../../../Build/Common/Network/PlatformNetworkManagerInterface.h"
-#include "../../../Build/Common/Network/SessionInfo.h"
+#include "../../../Platform/Common/Network/NetworkPlayerInterface.h"
+#include "../../../Platform/Common/Network/PlatformNetworkManagerInterface.h"
+#include "../../../Platform/Common/Network/SessionInfo.h"
 
 // This is how often we allow a search for new games
 #define MINECRAFT_XSESSION_SEARCH_DELAY_MILLISECONDS 30000

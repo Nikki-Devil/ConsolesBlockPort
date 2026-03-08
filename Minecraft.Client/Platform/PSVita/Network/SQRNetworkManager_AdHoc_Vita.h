@@ -8,7 +8,7 @@
 
 #include <unordered_map>
 
-#include "../../../Build/Common/Network/Sony/SQRNetworkManager.h"
+#include "../../../Platform/Common/Network/Sony/SQRNetworkManager.h"
 // 
 class SQRNetworkPlayer;
 class ISQRNetworkManagerListener;

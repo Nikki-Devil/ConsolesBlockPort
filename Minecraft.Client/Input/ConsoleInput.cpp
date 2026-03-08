@@ -1,4 +1,4 @@
-#include "../Build/stdafx.h"
+#include "../Platform/stdafx.h"
 #include "ConsoleInput.h"
 
 ConsoleInput::ConsoleInput(const wstring& msg, ConsoleInputSource *source)

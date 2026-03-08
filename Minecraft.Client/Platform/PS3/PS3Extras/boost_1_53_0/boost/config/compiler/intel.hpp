@@ -60,7 +60,7 @@
 // indicated by a config macro. As configured by Intel, the EDG front-end
 // requires certain compiler options be set to achieve that strong conformance.
 // Particularly /Qoption,c,--arg_dep_lookup (reported by Kirk Klobe & Thomas Witt)
-// and /Zc:wchar_t,forScope. See boost-root/tools/build/intel-win32-tools.jam for
+// and /Zc:wchar_t,forScope. See boost-root/tools/Platform/intel-win32-tools.jam for
 // details as they apply to particular versions of the compiler. When the
 // compiler does not predefine a macro indicating if an option has been set,
 // this config file simply assumes the option has been set.

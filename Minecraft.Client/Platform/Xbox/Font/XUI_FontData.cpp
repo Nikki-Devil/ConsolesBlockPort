@@ -1,5 +1,5 @@
-#include "../../../../Minecraft.World/Build/stdafx.h"
-#include "../../../Build/stubs.h"
+#include "../../../../Minecraft.World/Platform/stdafx.h"
+#include "../../../Platform/stubs.h"
 #include "../../../Minecraft.h"
 #include "../../../Textures/Textures.h"
 #include "XUI_FontData.h"

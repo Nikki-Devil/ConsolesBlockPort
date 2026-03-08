@@ -1,6 +1,6 @@
-#include "../../../../Minecraft.World/Build/stdafx.h"
+#include "../../../../Minecraft.World/Platform/stdafx.h"
 #include "ShutdownManager.h"
-#include "../../../Build/Common/Leaderboards/LeaderboardManager.h"
+#include "../../../Platform/Common/Leaderboards/LeaderboardManager.h"
 #include "../../../MinecraftServer.h"
 #ifdef __PS3__
 #include "C4JSpursJob.h"

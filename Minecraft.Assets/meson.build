@@ -5,7 +5,7 @@
 
 client_platform_path = meson.project_source_root() / 'Minecraft.Client/Platform'
 
-install_subdir(meson.current_source_dir() / 'Common', install_dir : '')
+install_subdir(meson.current_source_dir() / 'Common', install_dir : 'Common')
 install_subdir(client_platform_path / 'Durango/Sound', install_dir : 'Durango')
 install_subdir(client_platform_path / 'DurangoMedia/DLC', install_dir : 'Windows64Media') # Use this just for funsies so we get access to more dlc
 
