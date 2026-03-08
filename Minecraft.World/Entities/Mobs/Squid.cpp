@@ -1,6 +1,6 @@
 using namespace std;
 
-#include "../../Build/stdafx.h"
+#include "../../Platform/stdafx.h"
 #include "../../Headers/com.mojang.nbt.h"
 #include "../../Headers/net.minecraft.world.level.tile.h"
 #include "../../Headers/net.minecraft.world.phys.h"

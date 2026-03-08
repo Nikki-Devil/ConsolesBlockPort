@@ -1,6 +1,6 @@
 using namespace std;
 
-#include "../../Build/stdafx.h"
+#include "../../Platform/stdafx.h"
 #include "../../Headers/net.minecraft.world.h"
 #include "../../Headers/net.minecraft.world.entity.h"
 #include "../../Headers/net.minecraft.world.entity.player.h"

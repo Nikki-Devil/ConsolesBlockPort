@@ -187,25 +187,25 @@ void MemSect(int sect);
 #include "../../Minecraft.Client/Platform/Orbis/4JLibs/inc/4J_Input.h"
 #endif
 
-#include "../../Minecraft.Client/Build/Common/Network/GameNetworkManager.h"
+#include "../../Minecraft.Client/Platform/Common/Network/GameNetworkManager.h"
 
 // #ifdef _XBOX
-#include "../../Minecraft.Client/Build/Common/UI/UIEnums.h"
-#include "../../Minecraft.Client/Build/Common/App_Defines.h"
-#include "../../Minecraft.Client/Build/Common/App_enums.h"
-#include "../../Minecraft.Client/Build/Common/Tutorial/TutorialEnum.h"
-#include "../../Minecraft.Client/Build/Common/App_structs.h"
+#include "../../Minecraft.Client/Platform/Common/UI/UIEnums.h"
+#include "../../Minecraft.Client/Platform/Common/App_Defines.h"
+#include "../../Minecraft.Client/Platform/Common/App_enums.h"
+#include "../../Minecraft.Client/Platform/Common/Tutorial/TutorialEnum.h"
+#include "../../Minecraft.Client/Platform/Common/App_structs.h"
 //#endif
 
 #ifdef _XBOX
-#include "../../Minecraft.Client/Build/Common/XUI/XUI_Helper.h"
-#include "../../Minecraft.Client/Build/Common/XUI/XUI_Scene_Base.h"
+#include "../../Minecraft.Client/Platform/Common/XUI/XUI_Helper.h"
+#include "../../Minecraft.Client/Platform/Common/XUI/XUI_Scene_Base.h"
 #endif
-#include "../../Minecraft.Client/Build/Common/Consoles_App.h"
-#include "../../Minecraft.Client/Build/Common/Minecraft_Macros.h"
-#include "../../Minecraft.Client/Build/Common/Colours/ColourTable.h"
+#include "../../Minecraft.Client/Platform/Common/Consoles_App.h"
+#include "../../Minecraft.Client/Platform/Common/Minecraft_Macros.h"
+#include "../../Minecraft.Client/Platform/Common/Colours/ColourTable.h"
 
-#include "../../Minecraft.Client/Build/Common/BuildVer.h"
+#include "../../Minecraft.Client/Platform/Common/BuildVer.h"
 
 // This is generated at build time via scripts/pack_loc.py
 #include "strings.h"
@@ -237,7 +237,7 @@ void MemSect(int sect);
 #include "../../Minecraft.Client/Platform/PSVita/Sentient/SentientManager.h"
 #include "../../Minecraft.Client/Platform/PSVita/Sentient/MinecraftTelemetry.h"
 #elif defined(__linux__)
-	// Use Orbis-compatible headers on Linux (same as Minecraft.Client/Build/stdafx.h).
+	// Use Orbis-compatible headers on Linux (same as Minecraft.Client/Platform/stdafx.h).
 	// All Orbis Sentient headers have #pragma once, preventing double-inclusion
 	// when DLC/other Common files also pull in Minecraft.Client stdafx.h.
 	#include "../../Minecraft.Client/Platform/Linux/Linux_App.h"
@@ -251,10 +251,10 @@ void MemSect(int sect);
 #include "../../Minecraft.Client/Platform/Orbis/Sentient/MinecraftTelemetry.h"
 #endif
 
-#include "../../Minecraft.Client/Build/Common/DLC/DLCSkinFile.h"
-#include "../../Minecraft.Client/Build/Common/Console_Awards_enum.h"
-#include "../../Minecraft.Client/Build/Common/Potion_Macros.h"
-#include "../../Minecraft.Client/Build/Common/Console_Debug_enum.h"
-#include "../../Minecraft.Client/Build/Common/GameRules/ConsoleGameRulesConstants.h"
-#include "../../Minecraft.Client/Build/Common/GameRules/ConsoleGameRules.h"
-#include "../../Minecraft.Client/Build/Common/Telemetry/TelemetryManager.h"
+#include "../../Minecraft.Client/Platform/Common/DLC/DLCSkinFile.h"
+#include "../../Minecraft.Client/Platform/Common/Console_Awards_enum.h"
+#include "../../Minecraft.Client/Platform/Common/Potion_Macros.h"
+#include "../../Minecraft.Client/Platform/Common/Console_Debug_enum.h"
+#include "../../Minecraft.Client/Platform/Common/GameRules/ConsoleGameRulesConstants.h"
+#include "../../Minecraft.Client/Platform/Common/GameRules/ConsoleGameRules.h"
+#include "../../Minecraft.Client/Platform/Common/Telemetry/TelemetryManager.h"

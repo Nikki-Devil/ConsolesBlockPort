@@ -3,7 +3,7 @@ using namespace std;
 
 #include "Packet.h"
 
-#include "../../Build/stdafx.h"
+#include "../../Platform/stdafx.h"
 #include <iostream>
 #include "PacketListener.h"
 

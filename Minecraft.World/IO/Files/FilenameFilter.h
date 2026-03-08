@@ -1,7 +1,7 @@
 #pragma once
 using namespace std;
 
-#include "../../Build/stdafx.h"
+#include "../../Platform/stdafx.h"
 
 class File;
 
