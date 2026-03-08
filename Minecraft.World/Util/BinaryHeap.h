@@ -1,5 +1,5 @@
 #pragma once
-using namespace std;
+
 
 #include "../Platform/stdafx.h"
 #include "../AI/Navigation/Node.h"
