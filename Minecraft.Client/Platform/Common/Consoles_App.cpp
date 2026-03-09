@@ -1,6 +1,8 @@
-﻿
-#include "../Minecraft.World/Platform/stdafx.h"
-
+﻿#ifdef __cplusplus
+#endif
+#include <sys/stat.h>
+#include <dirent.h>
+#include <cstring>
 #include "../Minecraft.World/Recipes/Recipy.h"
 #include "../Minecraft.Client/GameState/Options.h"
 #include "../Minecraft.World/Util/AABB.h"
@@ -46,6 +48,7 @@
 #include "../Minecraft.Client/Textures/Packs/DLCTexturePack.h"
 #include "DLC/DLCPack.h"
 #include "../Minecraft.Client/Utils/StringTable.h"
+#include "../Minecraft.World/Util/StringHelpers.h"
 #ifndef _XBOX
 #include "../Minecraft.Client/Utils/ArchiveFile.h"
 #endif
@@ -4034,6 +4037,104 @@ int CMinecraftApp::BannedLevelDialogReturned(void *pParam,int iPad,const C4JStor
 	return 0;
 }
 
+
+
+namespace {
+static std::string ws_to_s(const std::wstring& w)
+{
+	std::string s;
+	s.reserve(w.size());
+	for (wchar_t wc : w) {
+		if (wc <= 0x7f) s.push_back(static_cast<char>(wc));
+		else s.push_back('?');
+	}
+	return s;
+}
+
+// convert narrow string to wide string (inverse of ws_to_s)
+static std::wstring s_to_ws(const std::string& s)
+{
+	std::wstring w;
+	w.reserve(s.size());
+	for (char c : s) {
+		unsigned char uc = static_cast<unsigned char>(c);
+		if (uc <= 0x7f) w.push_back(static_cast<wchar_t>(uc));
+		else w.push_back(L'?');
+	}
+	return w;
+}
+// ugly function
+static bool find_file_recursive(const std::string &dir, const std::string &target, std::string &out)
+{
+	DIR *dp = opendir(dir.c_str());
+	if (!dp) return false;
+	struct dirent *entry;
+	while ((entry = readdir(dp)) != NULL) {
+		const char *name = entry->d_name;
+		if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0) continue;
+		std::string path = dir;
+		if (!path.empty() && path.back() != '/') path += '/';
+		path += name;
+		struct stat st;
+		if (stat(path.c_str(), &st) == 0) {
+			if (S_ISREG(st.st_mode)) {
+				if (target == name) {
+					out = path;
+					closedir(dp);
+					return true;
+				}
+			} else if (S_ISDIR(st.st_mode)) {
+				if (find_file_recursive(path, target, out)) {
+					closedir(dp);
+					return true;
+				}
+			}
+		}
+	}
+	closedir(dp);
+	return false;
+}
+
+static std::wstring GetExecutableDirectory()
+{
+#if defined(__linux__) || defined(__unix__)
+	char buf[PATH_MAX];
+	ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
+	if (len != -1) {
+		buf[len] = '\0';
+		std::string path(buf);
+		size_t pos = path.find_last_of('/');
+		if (pos != std::string::npos) {
+			std::string dir = path.substr(0, pos);
+			return s_to_ws(dir);
+		} else {
+			return s_to_ws(path);
+		}
+	}
+	return std::wstring();
+#else
+	return std::wstring();
+#endif
+}
+
+static std::wstring FindMediaFileRecursively(const std::wstring& startDir, const std::wstring& mediaPath)
+{
+	std::wstring fileNameW = mediaPath;
+	size_t pos = mediaPath.find_last_of(L"/\\");
+	if (pos != std::wstring::npos)
+		fileNameW = mediaPath.substr(pos + 1);
+
+	std::string start = ws_to_s(startDir);
+	if (start.empty()) start = ".";
+
+	std::string target = ws_to_s(fileNameW);
+	std::string found;
+	if (find_file_recursive(start, target, found))
+		return s_to_ws(found);
+	return std::wstring();
+}
+
+
 void CMinecraftApp::loadMediaArchive()
 {
 	std::wstring mediapath = L"";
@@ -4054,7 +4155,44 @@ void CMinecraftApp::loadMediaArchive()
 
 	if (!mediapath.empty()) 
 	{
-		m_mediaArchive = new ArchiveFile( File(mediapath) );
+		// we search for the media file in the executable dir, its ancestors, or working dir.
+		std::wstring executablePath = GetExecutableDirectory();
+		std::wstring foundPath;
+
+		// try direct candidate paths by joining executable dir and ancestor dirs with the mediapath
+		if (!executablePath.empty()) {
+			std::wstring candidate = executablePath + L"/" + mediapath;
+			if (File(candidate).exists()) {
+				foundPath = candidate;
+			} else {
+				// walk up a few ancestor levels looking for the mediapath relative to each
+				std::wstring parent = executablePath;
+				for (int i = 0; i < 6 && !parent.empty(); ++i) {
+					size_t pos = parent.find_last_of(L"/\\");
+					if (pos == std::wstring::npos) { parent.clear(); break; }
+					parent = parent.substr(0, pos);
+					candidate = parent + L"/" + mediapath;
+					if (File(candidate).exists()) { foundPath = candidate; break; }
+				}
+			}
+		}
+
+		// 2) if still not found, do a recursive search starting at the executable dir (or current dir).. yeah lol
+		if (foundPath.empty()) {
+			std::wstring startForSearch = executablePath.empty() ? L"." : executablePath;
+			foundPath = FindMediaFileRecursively(startForSearch, mediapath);
+		}
+
+		// 3) fallback: try the relative mediapath from cwd
+		if (foundPath.empty()) {
+			if (File(mediapath).exists()) foundPath = mediapath;
+		}
+
+		if (!foundPath.empty()) {
+			m_mediaArchive = new ArchiveFile( File(foundPath) );
+		} else {
+			m_mediaArchive = NULL;
+		}
 	}
 #if 0
 	std::string path = "Common\\media.arc";
@@ -4095,7 +4233,7 @@ void CMinecraftApp::loadMediaArchive()
 		m_mediaArchive = NULL;
 	}
 #endif
-}
+}}
 
 void CMinecraftApp::loadStringTable()
 {

@@ -15,7 +15,7 @@ Font::Font(Options *options, const std::wstring& name, Textures* textures, bool 
 	charWidths = new int[charC];
 
 	// 4J - added initialisers
-	memset(charWidths, 0, charC);
+	memset(charWidths, 0, charC * sizeof(int));
 
 	enforceUnicodeSheet = false;
 	bidirectional = false;
@@ -50,9 +50,26 @@ Font::Font(Options *options, const std::wstring& name, Textures* textures, bool 
     }
 	*/
 
-    int w = img->getWidth();
-    int h = img->getHeight();
-    intArray rawPixels(w * h);
+	int w = img->getWidth();
+	int h = img->getHeight();
+
+	// check font size (broken?)
+	uint64_t pixelsCount = (uint64_t)w * (uint64_t)h;
+	const uint64_t MAX_PIXELS = 4096ULL * 4096ULL; // ~16M pixels
+	if (w <= 0 || h <= 0 || pixelsCount == 0 || pixelsCount > MAX_PIXELS ||
+		w < m_cols * m_charWidth || h < m_rows * m_charHeight)
+	{
+		app.DebugPrintf("Font::Font - rejecting font image %ls size %d x %d, using fallback\n", name.c_str(), w, h);
+		delete img;
+		// incase its fucked we make a fallback
+		int fallbackW = m_cols * m_charWidth;
+		int fallbackH = m_rows * m_charHeight;
+		img = new BufferedImage(fallbackW > 0 ? fallbackW : 8, fallbackH > 0 ? fallbackH : 8, BufferedImage::TYPE_INT_ARGB);
+		w = img->getWidth();
+		h = img->getHeight();
+	}
+
+	intArray rawPixels(w * h);
     img->getRGB(0, 0, w, h, rawPixels, 0, w);
 
     for (int i = 0; i < charC; i++)

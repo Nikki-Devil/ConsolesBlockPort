@@ -11,6 +11,7 @@ private:
 public:
 	static void staticCtor();
 
+	ColourTable();
 	ColourTable(PBYTE pbData, DWORD dwLength);
 	ColourTable(ColourTable *defaultColours, PBYTE pbData, DWORD dwLength);
 

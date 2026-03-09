@@ -46,22 +46,50 @@ std::wstring TexturePack::getPath(bool bTitleUpdateTexture /*= false*/)
 
 	if(bTitleUpdateTexture)
 	{
-		// Make the content package point to to the UPDATE: drive is needed
-		wDrive= wstr + L"Common\\res\\TitleUpdate\\";
+		wDrive= wstr + L"\\Common\\res\\TitleUpdate\\";
 	}
 	else
 	{
-		wDrive= wstr + L"Common\\";
+		wDrive= wstr + L"/Common/";
 	}
 #else
-	if(bTitleUpdateTexture)
+	// same thing as consolesapp
+	std::wstring assetsBase;
+#if defined(__linux__) || defined(__unix__)
 	{
-		// Make the content package point to to the UPDATE: drive is needed
-		wDrive=L"Common\\res\\TitleUpdate\\";
+		char buf[PATH_MAX];
+		ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
+		if (len != -1) {
+			buf[len] = '\0';
+			std::string exePath(buf);
+			size_t pos = exePath.find_last_of('/');
+			std::string exeDir = (pos == std::string::npos) ? exePath : exePath.substr(0, pos);
+			std::wstring candidate = convStringToWstring(exeDir) + L"/../../Minecraft.Assets/";
+			File candidateFile(candidate);
+			if (candidateFile.exists()) assetsBase = candidate;
+		}
+
+		if (assetsBase.empty()) {
+			// Try searching from CWD
+			File cwdCandidate(L"Minecraft.Assets/");
+			if (cwdCandidate.exists()) assetsBase = L"Minecraft.Assets/";
+		}
 	}
-	else
-	{
-		wDrive=L"Common/";
+#endif
+
+	if (!assetsBase.empty()) {
+		if (bTitleUpdateTexture) wDrive = assetsBase + L"Common/res/TitleUpdate/";
+		else wDrive = assetsBase + L"Common/";
+	} else {
+		if(bTitleUpdateTexture)
+		{
+			// Make the content package point to to the UPDATE: drive is needed
+			wDrive=L"Common\\res\\TitleUpdate\\";
+		}
+		else
+		{
+			wDrive=L"Common/";
+		}
 	}
 #endif
 #endif

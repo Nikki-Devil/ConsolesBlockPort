@@ -47,8 +47,14 @@ void DefaultTexturePack::loadName()
 
 bool DefaultTexturePack::hasFile(const std::wstring &name)
 {
-//	return DefaultTexturePack::class->getResourceAsStream(name) != null;
-	return true;
+	// check both TitleUpdate and default Common asset paths for the file
+	File f1(getPath(true) + name);
+	if (f1.exists() && f1.isFile()) return true;
+
+	File f2(getPath(false) + name);
+	if (f2.exists() && f2.isFile()) return true;
+
+	return false;
 }
 
 bool DefaultTexturePack::isTerrainUpdateCompatible()

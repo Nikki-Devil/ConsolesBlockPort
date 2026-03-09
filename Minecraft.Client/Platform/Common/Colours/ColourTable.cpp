@@ -319,6 +319,13 @@ ColourTable::ColourTable(PBYTE pbData, DWORD dwLength)
 	loadColoursFromData(pbData, dwLength);
 }
 
+// default ctor: initialize to safe default values
+ColourTable::ColourTable()
+{
+	for (int i = 0; i < (int)eMinecraftColour_COUNT; ++i)
+		m_colourValues[i] = 0;
+}
+
 ColourTable::ColourTable(ColourTable *defaultColours, PBYTE pbData, DWORD dwLength)
 {
 	// 4J Stu - Default the colours that of the table passed in

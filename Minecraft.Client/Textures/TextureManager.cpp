@@ -131,14 +131,33 @@ std::vector<Texture *> *TextureManager::createTextures(const std::wstring &filen
 		int frameWidth = width;
 		int frameHeight = width;
 
-		// This could end as 0 frames
-		int frameCount = height / frameWidth;
-		for (int i = 0; i < frameCount; i++)
+		// avoid x/0 and 0/0 and similar nonsense 
+		if (frameWidth <= 0 || frameHeight <= 0)
 		{
-			BufferedImage *subImage = image->getSubimage(0, frameHeight * i, frameWidth, frameHeight);
-			Texture *texture = createTexture(texName, mode, frameWidth, frameHeight, clamp, format, minFilter, magFilter, mipmap || image->getData(1) != NULL, subImage);
-			delete subImage;
-			result->push_back(texture);
+				app.DebugPrintf("TextureManager.createTextures - invalid frame dimensions %d x %d for %s\n", frameWidth, frameHeight, wstringtofilename(filename));
+			// erm wattesigma
+			if (width == height)
+			{
+				result->push_back(createTexture(texName, mode, width, height, clamp, format, minFilter, magFilter, mipmap || image->getData(1) != NULL, image));
+			}
+			else
+			{
+#ifndef _CONTENT_PACKAGE
+				wprintf(L"TextureManager.createTextures: Skipping %ls because of invalid animation frame size\n", filename.c_str());
+#endif
+			}
+		}
+		else
+		{
+			// This could end as 0 frames
+			int frameCount = height / frameWidth;
+			for (int i = 0; i < frameCount; i++)
+			{
+				BufferedImage *subImage = image->getSubimage(0, frameHeight * i, frameWidth, frameHeight);
+				Texture *texture = createTexture(texName, mode, frameWidth, frameHeight, clamp, format, minFilter, magFilter, mipmap || image->getData(1) != NULL, subImage);
+				delete subImage;
+				result->push_back(texture);
+			}
 		}
 	}
 	else

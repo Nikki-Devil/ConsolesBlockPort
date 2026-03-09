@@ -538,7 +538,18 @@ void Textures::loadTexture(BufferedImage *img, int id, bool blur, bool clamp)
     int w = img->getWidth();
     int h = img->getHeight();
 
-    intArray rawPixels(w*h);
+	// metadata issue??
+	uint64_t pixelsCount = (uint64_t)w * (uint64_t)h;
+	const uint64_t MAX_PIXELS = 4096ULL * 4096ULL; // defend against absurd sizes (approx 16M pixels)
+	if (w <= 0 || h <= 0 || pixelsCount == 0 || pixelsCount > MAX_PIXELS)
+	{
+		app.DebugPrintf("Textures::loadTexture - rejecting image with invalid size %d x %d\n", w, h);
+		// load missingno incase
+		loadTexture(missingNo, id, blur, clamp);
+		return;
+	}
+
+	intArray rawPixels(w*h);
     img->getRGB(0, 0, w, h, rawPixels, 0, w);
 
 	if (options != NULL && options->anaglyph3d)
@@ -827,8 +838,14 @@ void Textures::replaceTextureDirect(shortArray rawPixels, int w, int h, int id)
 
 void Textures::releaseTexture(int id)
 {
-    loadedImages.erase(id);
-    glDeleteTextures(id);
+	AUTO_VAR(it, loadedImages.find(id));
+	if (it != loadedImages.end())
+	{
+		BufferedImage *img = it->second;
+		delete img;
+		loadedImages.erase(it);
+	}
+	glDeleteTextures(id);
 }
 
 int Textures::loadHttpTexture(const std::wstring& url, const std::wstring& backup)
@@ -840,7 +857,9 @@ int Textures::loadHttpTexture(const std::wstring& url, const std::wstring& backu
 		{
             if (texture->id < 0)
 			{
-                texture->id = getTexture(texture->loadedImage);
+				texture->id = getTexture(texture->loadedImage);
+				// transfer ownership of the BufferedImage into Textures
+				texture->loadedImage = NULL;
             }
 			else
 			{
@@ -866,7 +885,9 @@ int Textures::loadHttpTexture(const std::wstring& url, int backup)
 		{
             if (texture->id < 0)
 			{
-                texture->id = getTexture(texture->loadedImage);
+				texture->id = getTexture(texture->loadedImage);
+				// transfer ownership of the BufferedImage into Textures
+				texture->loadedImage = NULL;
             }
 			else
 			{
@@ -909,8 +930,18 @@ void Textures::removeHttpTexture(const std::wstring& url)
         texture->count--;
         if (texture->count == 0)
 		{
-            if (texture->id >= 0) releaseTexture(texture->id);
-            httpTextures.erase(url);
+			if (texture->id >= 0)
+			{
+				releaseTexture(texture->id);
+			}
+			else if (texture->loadedImage != NULL)
+			{
+				// not yet handed to Textures, free it now
+				delete texture->loadedImage;
+				texture->loadedImage = NULL;
+			}
+			httpTextures.erase(url);
+			delete texture;
         }
     }
 }
@@ -942,7 +973,9 @@ int Textures::loadMemTexture(const std::wstring& url, const std::wstring& backup
 
 			if (texture->id < 0)
 			{
-				texture->id = getTexture(texture->loadedImage, C4JRender::TEXTURE_FORMAT_RxGyBzAw, MIPMAP);
+                texture->id = getTexture(texture->loadedImage, C4JRender::TEXTURE_FORMAT_RxGyBzAw, MIPMAP);
+                // transfer ownership of the BufferedImage into Textures
+                texture->loadedImage = NULL;
 			}
 			else
 			{
@@ -1123,6 +1156,14 @@ void Textures::reloadAll()
 	}
 
 	idMap.clear();
+	// free any cached BufferedImage objects and delete their GL textures
+	for (AUTO_VAR(it, loadedImages.begin()); it != loadedImages.end(); ++it)
+	{
+		int id = it->first;
+		BufferedImage *image = it->second;
+		if (image) delete image;
+		glDeleteTextures(id);
+	}
 	loadedImages.clear();
 
 	loadIndexedTextures();

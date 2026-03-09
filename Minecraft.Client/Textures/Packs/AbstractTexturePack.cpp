@@ -4,6 +4,11 @@
 #include "../../../Minecraft.World/IO/Streams/InputOutputStream.h"
 #include "../../../Minecraft.World/Util/StringHelpers.h"
 
+#if defined(__linux__) || defined(__unix__)
+#include <unistd.h>
+#include <limits.h>
+#endif
+
 AbstractTexturePack::AbstractTexturePack(DWORD id, File *file, const std::wstring &name, TexturePack *fallback) : id(id), name(name)
 {
 	// 4J init
@@ -95,10 +100,45 @@ void AbstractTexturePack::loadDescription()
 	//	}
 	//}
 #endif
-}
+		// try to locate the colours.col file in Minecraft.Assets relative to the executable thank u.
+		bool loaded = false;
+#if defined(__linux__) || defined(__unix__)
+		char buf[PATH_MAX];
+		ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
+		if (len != -1) {
+			buf[len] = '\0';
+			std::string exePath(buf);
+			size_t pos = exePath.find_last_of('/');
+			std::string exeDir = (pos == std::string::npos) ? exePath : exePath.substr(0, pos);
+			std::wstring candidate = convStringToWstring(exeDir) + L"/../../Minecraft.Assets/Common/res/TitleUpdate/res/colours.col";
+			File candidateFile(candidate);
+			if (candidateFile.exists()) {
+				DWORD dwLength = candidateFile.length();
+				byteArray data(dwLength);
+				FileInputStream fis(candidateFile);
+				fis.read(data, 0, dwLength);
+				fis.close();
+				if (m_colourTable != NULL) delete m_colourTable;
+				m_colourTable = new ColourTable(data.data, dwLength);
+				delete [] data.data;
+				loaded = true;
+			}
+		}
+#endif
+
+		if (!loaded) {
+			app.DebugPrintf("Failed to load the default colours table\n");
+			// create a safe default colour table so callers can continue without crashing
+			if(m_colourTable != NULL) delete m_colourTable;
+			m_colourTable = new ColourTable();
+		}
+
+		app.FatalLoadError();
+	}
 
 void AbstractTexturePack::loadName()
 {
+	// todo
 }
 
 InputStream *AbstractTexturePack::getResource(const std::wstring &name, bool allowFallback) //throws IOException
@@ -218,9 +258,11 @@ std::wstring AbstractTexturePack::getAnimationString(const std::wstring &texture
 BufferedImage *AbstractTexturePack::getImageResource(const std::wstring& File, bool filenameHasExtension /*= false*/, bool bTitleUpdateTexture /*=false*/, const std::wstring &drive /*=L""*/)
 {
 	const char *pchTexture=wstringtofilename(File);
-	app.DebugPrintf("AbstractTexturePack::getImageResource - %s, drive is %s\n",pchTexture, wstringtofilename(drive));
+	std::wstring resolvedDrive = drive;
+	if(resolvedDrive.empty()) resolvedDrive = TexturePack::getPath(bTitleUpdateTexture);
+	app.DebugPrintf("AbstractTexturePack::getImageResource - %s, drive is %s\n",pchTexture, wstringtofilename(resolvedDrive));
 
-	return new BufferedImage(TexturePack::getResource(L"/" + File),filenameHasExtension,bTitleUpdateTexture,drive);
+	return new BufferedImage(TexturePack::getResource(L"/" + File),filenameHasExtension,bTitleUpdateTexture,resolvedDrive);
 }
 
 void AbstractTexturePack::loadDefaultUI()
@@ -271,6 +313,9 @@ void AbstractTexturePack::loadDefaultColourTable()
 	else
 	{
 		app.DebugPrintf("Failed to load the default colours table\n");
+		// create a safe default colour table so callers can continue without crashing
+		if(m_colourTable != NULL) delete m_colourTable;
+		m_colourTable = new ColourTable();
 		app.FatalLoadError();
 	}
 }

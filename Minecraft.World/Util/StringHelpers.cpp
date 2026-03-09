@@ -46,6 +46,17 @@ std::wstring convStringToWstring(const std::string& converting)
 	return converted;
 }
 
+std::string convWstringToString(const std::wstring& converting)
+{
+	std::string converted(converting.length(), ' ');
+	for (size_t i = 0; i < converting.length(); ++i) {
+		wchar_t wc = converting[i];
+		if (wc <= 0x7f) converted[i] = static_cast<char>(wc);
+		else converted[i] = '?';
+	}
+	return converted;
+}
+
 // Convert for filename std::wstrings to a straight character pointer for Xbox APIs. The returned string is only valid until
 // this function is called again, and it isn't thread-safe etc. as I'm just storing the returned name in a local static
 // to save having to clear it up everywhere this is used.
