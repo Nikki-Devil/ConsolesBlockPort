@@ -40,15 +40,15 @@ Font::Font(Options *options, const std::wstring& name, Textures* textures, bool 
 	random = new Random();
 
 	// Load the image
-    BufferedImage *img = textures->readImage(m_textureName, name);
+	BufferedImage *img = textures->readImage(m_textureName, name);
 
 	/* - 4J - TODO
-	try {
-        img = ImageIO.read(Textures.class.getResourceAsStream(name));
-    } catch (IOException e) {
-        throw new RuntimeException(e);
-    }
-	*/
+	 *	try {
+	 *        img = ImageIO.read(Textures.class.getResourceAsStream(name));
+} catch (IOException e) {
+throw new RuntimeException(e);
+}
+*/
 
 	int w = img->getWidth();
 	int h = img->getHeight();
@@ -70,33 +70,33 @@ Font::Font(Options *options, const std::wstring& name, Textures* textures, bool 
 	}
 
 	intArray rawPixels(w * h);
-    img->getRGB(0, 0, w, h, rawPixels, 0, w);
+	img->getRGB(0, 0, w, h, rawPixels, 0, w);
 
-    for (int i = 0; i < charC; i++)
+	for (int i = 0; i < charC; i++)
 	{
-        int xt = i % m_cols;
-        int yt = i / m_cols;
-		
-        int x = 7;
-        for (; x >= 0; x--)
-		{
-            int xPixel = xt * 8 + x;
-            bool emptyColumn = true;
-            for (int y = 0; y < 8 && emptyColumn; y++)
-			{
-                int yPixel = (yt * 8 + y) * w;
-				bool emptyPixel = (rawPixels[xPixel + yPixel] >> 24) == 0; // Check the alpha value
-                if (!emptyPixel) emptyColumn = false; 
-            }
-            if (!emptyColumn)
-			{
-                break;
-            }
-        }
+		int xt = i % m_cols;
+		int yt = i / m_cols;
 
-        if (i == ' ') x = 4 - 2;
-        charWidths[i] = x + 2;
-    }
+		int x = 7;
+		for (; x >= 0; x--)
+		{
+			int xPixel = xt * 8 + x;
+			bool emptyColumn = true;
+			for (int y = 0; y < 8 && emptyColumn; y++)
+			{
+				int yPixel = (yt * 8 + y) * w;
+				bool emptyPixel = (rawPixels[xPixel + yPixel] >> 24) == 0; // Check the alpha value
+				if (!emptyPixel) emptyColumn = false;
+			}
+			if (!emptyColumn)
+			{
+				break;
+			}
+		}
+
+		if (i == ' ') x = 4 - 2;
+		charWidths[i] = x + 2;
+	}
 
 	delete img;
 
@@ -143,19 +143,19 @@ Font::~Font()
 #endif
 
 void Font::renderCharacter(wchar_t c)
-{	
+{
 	float xOff = c % m_cols * m_charWidth;
 	float yOff = c / m_cols * m_charWidth;
 
 	float width = charWidths[c] - .01f;
 	float height = m_charHeight - .01f;
-	
+
 	float fontWidth = m_cols * m_charWidth;
 	float fontHeight = m_rows * m_charHeight;
 
-    Tesselator *t = Tesselator::getInstance();
+	Tesselator *t = Tesselator::getInstance();
 	// 4J Stu - Changed to a quad so that we can use within a command buffer
-#if 1
+	#if 1
 	t->begin();
 	t->tex(xOff / fontWidth, (yOff + 7.99f) / fontHeight);
 	t->vertex(xPos, yPos + height, 0.0f);
@@ -170,7 +170,7 @@ void Font::renderCharacter(wchar_t c)
 	t->vertex(xPos, yPos, 0.0f);
 
 	t->end();
-#else
+	#else
 	t->begin(GL_TRIANGLE_STRIP);
 	t->tex(xOff / 128.0F, yOff / 128.0F);
 	t->vertex(xPos, yPos, 0.0f);
@@ -181,15 +181,15 @@ void Font::renderCharacter(wchar_t c)
 	t->tex((xOff + width) / 128.0F, (yOff + 7.99f) / 128.0F);
 	t->vertex(xPos + width, yPos + 7.99f, 0.0f);
 	t->end();
-#endif
+	#endif
 
 	xPos += (float) charWidths[c];
 }
 
 void Font::drawShadow(const std::wstring& str, int x, int y, int color)
 {
-    draw(str, x + 1, y + 1, color, true);
-    draw(str, x, y, color, false);
+	draw(str, x + 1, y + 1, color, true);
+	draw(str, x, y, color, false);
 }
 
 void Font::drawShadowWordWrap(const std::wstring &str, int x, int y, int w, int color, int h)
@@ -251,7 +251,7 @@ void Font::draw(const std::wstring &str, bool dropShadow)
 			i += 1;
 			continue;
 		}
-		
+
 		// "noise" for crazy splash screen message
 		if (noise)
 		{
@@ -261,7 +261,7 @@ void Font::draw(const std::wstring &str, bool dropShadow)
 				newc = random->nextInt(SharedConstants::acceptableLetters.length());
 			} while (charWidths[c + 32] != charWidths[newc + 32]);
 			c = newc;
-		}		
+		}
 
 		renderCharacter(c);
 	}
@@ -314,9 +314,9 @@ std::wstring Font::sanitize(const std::wstring& str)
 {
 	std::wstring sb = str;
 
-    for (unsigned int i = 0; i < sb.length(); i++)
+	for (unsigned int i = 0; i < sb.length(); i++)
 	{
-        if (CharacterExists(sb[i]))
+		if (CharacterExists(sb[i]))
 		{
 			sb[i] = MapCharacter(sb[i]);
 		}
@@ -325,8 +325,8 @@ std::wstring Font::sanitize(const std::wstring& str)
 			// If this character isn't supported, just show the first character (empty square box character)
 			sb[i] = 0;
 		}
-    }
-    return sb;
+	}
+	return sb;
 }
 
 int Font::MapCharacter(wchar_t c)
@@ -379,97 +379,97 @@ void Font::drawWordWrap(const std::wstring &string, int x, int y, int w, int col
 
 void Font::drawWordWrapInternal(const std::wstring& string, int x, int y, int w, int col, bool darken, int h)
 {
-    std::vector<std::wstring>lines = stringSplit(string,L'\n');
-    if (lines.size() > 1)
+	std::vector<std::wstring>lines = stringSplit(string,L'\n');
+	if (lines.size() > 1)
 	{
 		AUTO_VAR(itEnd, lines.end());
 		for (AUTO_VAR(it, lines.begin()); it != itEnd; it++)
 		{
 			// 4J Stu - Don't draw text that will be partially cutoff/overlap something it shouldn't
 			if( (y + this->wordWrapHeight(*it, w)) > h) break;
-            drawWordWrapInternal(*it, x, y, w, col, h);
-            y += this->wordWrapHeight(*it, w);
-        }
-        return;
-    }
-    std::vector<std::wstring> words = stringSplit(string,L' ');
-    unsigned int pos = 0;
-    while (pos < words.size())
+			drawWordWrapInternal(*it, x, y, w, col, h);
+			y += this->wordWrapHeight(*it, w);
+		}
+		return;
+	}
+	std::vector<std::wstring> words = stringSplit(string,L' ');
+	unsigned int pos = 0;
+	while (pos < words.size())
 	{
-        std::wstring line = words[pos++] + L" ";
-        while (pos < words.size() && width(line + words[pos]) < w)
+		std::wstring line = words[pos++] + L" ";
+		while (pos < words.size() && width(line + words[pos]) < w)
 		{
-            line += words[pos++] + L" ";
-        }
-        while (width(line) > w)
+			line += words[pos++] + L" ";
+		}
+		while (width(line) > w)
 		{
-            int l = 0;
-            while (width(line.substr(0, l + 1)) <= w)
+			int l = 0;
+			while (width(line.substr(0, l + 1)) <= w)
 			{
-                l++;
-            }
-            if (trimString(line.substr(0, l)).length() > 0)
+				l++;
+			}
+			if (trimString(line.substr(0, l)).length() > 0)
 			{
-                draw(line.substr(0, l), x, y, col);
-                y += 8;
-            }
-            line = line.substr(l);
+				draw(line.substr(0, l), x, y, col);
+				y += 8;
+			}
+			line = line.substr(l);
 
 			// 4J Stu - Don't draw text that will be partially cutoff/overlap something it shouldn't
 			if( (y + 8) > h) break;
-        }
+		}
 		// 4J Stu - Don't draw text that will be partially cutoff/overlap something it shouldn't
-        if (trimString(line).length() > 0 && !( (y + 8) > h) )
+		if (trimString(line).length() > 0 && !( (y + 8) > h) )
 		{
-            draw(line, x, y, col);
-            y += 8;
-        }
-    }
+			draw(line, x, y, col);
+			y += 8;
+		}
+	}
 
 }
 
 int Font::wordWrapHeight(const std::wstring& string, int w)
 {
-    std::vector<std::wstring> lines = stringSplit(string,L'\n');
-    if (lines.size() > 1)
+	std::vector<std::wstring> lines = stringSplit(string,L'\n');
+	if (lines.size() > 1)
 	{
-        int h = 0;
+		int h = 0;
 		AUTO_VAR(itEnd, lines.end());
 		for (AUTO_VAR(it, lines.begin()); it != itEnd; it++)
 		{
-            h += this->wordWrapHeight(*it, w);
-        }
-        return h;
-    }
+			h += this->wordWrapHeight(*it, w);
+		}
+		return h;
+	}
 	std::vector<std::wstring> words = stringSplit(string,L' ');
-    unsigned int pos = 0;
-    int y = 0;
-    while (pos < words.size())
+	unsigned int pos = 0;
+	int y = 0;
+	while (pos < words.size())
 	{
-        std::wstring line = words[pos++] + L" ";
-        while (pos < words.size() && width(line + words[pos]) < w)
+		std::wstring line = words[pos++] + L" ";
+		while (pos < words.size() && width(line + words[pos]) < w)
 		{
-            line += words[pos++] + L" ";
-        }
-        while (width(line) > w)
+			line += words[pos++] + L" ";
+		}
+		while (width(line) > w)
 		{
-            int l = 0;
+			int l = 0;
 			while (width(line.substr(0, l + 1)) <= w)
 			{
-                l++;
-            }
-            if (trimString(line.substr(0, l)).length() > 0)
+				l++;
+			}
+			if (trimString(line.substr(0, l)).length() > 0)
 			{
-                y += 8;
-            }
-            line = line.substr(l);
-        }
-        if (trimString(line).length() > 0) {
-            y += 8;
-        }
-    }
-    if (y < 8) y += 8;
-    return y;
+				y += 8;
+			}
+			line = line.substr(l);
+		}
+		if (trimString(line).length() > 0) {
+			y += 8;
+		}
+	}
+	if (y < 8) y += 8;
+	return y;
 
 }
 
@@ -499,7 +499,7 @@ bool Font::AllCharactersValid(const std::wstring &str)
 		int index = SharedConstants::acceptableLetters.find(c);
 
 		if ((c != ' ') && !(index > 0 && !enforceUnicodeSheet))
-		{					
+		{
 			return false;
 		}
 	}
@@ -510,124 +510,124 @@ bool Font::AllCharactersValid(const std::wstring &str)
 /*// 4J - this code is lifted from #if 0 section above, so that we can directly create what would have gone in each of our 256 + 32 command buffers
 void Font::renderFakeCB(IntBuffer *ib)
 {
-    Tesselator *t = Tesselator::getInstance();
+Tesselator *t = Tesselator::getInstance();
 
-	int i;
+int i;
 
-	for(unsigned int j = 0; j < ib->limit(); j++)
-	{
-		int cb = ib->get(j);
+for(unsigned int j = 0; j < ib->limit(); j++)
+{
+int cb = ib->get(j);
 
-		if( cb < 256 )
-		{
-			i = cb;
-			t->begin();
-			int ix = i % 16 * 8;
-			int iy = i / 16 * 8;
-			// float s = 7.99f;
-			float s = 7.99f;
+if( cb < 256 )
+{
+i = cb;
+t->begin();
+int ix = i % 16 * 8;
+int iy = i / 16 * 8;
+// float s = 7.99f;
+float s = 7.99f;
 
-			float uo = (0.0f) / 128.0f;
-			float vo = (0.0f) / 128.0f;
+float uo = (0.0f) / 128.0f;
+float vo = (0.0f) / 128.0f;
 
-			t->vertexUV((float)(0), (float)( 0 + s), (float)( 0), (float)( ix / 128.0f + uo), (float)( (iy + s) / 128.0f + vo));
-			t->vertexUV((float)(0 + s), (float)( 0 + s), (float)( 0), (float)( (ix + s) / 128.0f + uo), (float)( (iy + s) / 128.0f + vo));
-			t->vertexUV((float)(0 + s), (float)( 0), (float)( 0), (float)( (ix + s) / 128.0f + uo), (float)( iy / 128.0f + vo));
-			t->vertexUV((float)(0), (float)( 0), (float)( 0), (float)( ix / 128.0f + uo), (float)( iy / 128.0f + vo));
-			// target.colorBlit(texture, x + xo, y, color, ix, iy,
-		// charWidths[chars[i]], 8);
-			t->end();
+t->vertexUV((float)(0), (float)( 0 + s), (float)( 0), (float)( ix / 128.0f + uo), (float)( (iy + s) / 128.0f + vo));
+t->vertexUV((float)(0 + s), (float)( 0 + s), (float)( 0), (float)( (ix + s) / 128.0f + uo), (float)( (iy + s) / 128.0f + vo));
+t->vertexUV((float)(0 + s), (float)( 0), (float)( 0), (float)( (ix + s) / 128.0f + uo), (float)( iy / 128.0f + vo));
+t->vertexUV((float)(0), (float)( 0), (float)( 0), (float)( ix / 128.0f + uo), (float)( iy / 128.0f + vo));
+// target.colorBlit(texture, x + xo, y, color, ix, iy,
+// charWidths[chars[i]], 8);
+t->end();
 
-			glTranslatef((float)charWidths[i], 0, 0);
-		}
-		else
-		{
-			i = cb - 256;
+glTranslatef((float)charWidths[i], 0, 0);
+}
+else
+{
+i = cb - 256;
 
-			int br = ((i >> 3) & 1) * 0x55;
-			int r = ((i >> 2) & 1) * 0xaa + br;
-			int g = ((i >> 1) & 1) * 0xaa + br;
-			int b = ((i >> 0) & 1) * 0xaa + br;
-			if (i == 6)
-			{
-				r += 0x55;
-			}
-			bool darken = i >= 16;
+int br = ((i >> 3) & 1) * 0x55;
+int r = ((i >> 2) & 1) * 0xaa + br;
+int g = ((i >> 1) & 1) * 0xaa + br;
+int b = ((i >> 0) & 1) * 0xaa + br;
+if (i == 6)
+{
+r += 0x55;
+}
+bool darken = i >= 16;
 
-			// color = r << 16 | g << 8 | b;
-			if (darken)
-			{
-				r /= 4;
-				g /= 4;
-				b /= 4;
-			}
-			glColor3f(r / 255.0f, g / 255.0f, b / 255.0f);
-		}
-	}
+// color = r << 16 | g << 8 | b;
+if (darken)
+{
+r /= 4;
+g /= 4;
+b /= 4;
+}
+glColor3f(r / 255.0f, g / 255.0f, b / 255.0f);
+}
+}
 }
 
 void Font::loadUnicodePage(int page)
 {
-	wchar_t fileName[25];
-	//String fileName = String.format("/1_2_2/font/glyph_%02X.png", page);
-	swprintf(fileName,25,L"/1_2_2/font/glyph_%02X.png",page);
-	BufferedImage *image = new BufferedImage(fileName);
-	//try
-	//{
-	//	image = ImageIO.read(Textures.class.getResourceAsStream(fileName.toString()));
-	//}
-	//catch (IOException e)
-	//{
-	//	throw new RuntimeException(e);
-	//}
+wchar_t fileName[25];
+//String fileName = String.format("/1_2_2/font/glyph_%02X.png", page);
+swprintf(fileName,25,L"/1_2_2/font/glyph_%02X.png",page);
+BufferedImage *image = new BufferedImage(fileName);
+//try
+//{
+//	image = ImageIO.read(Textures.class.getResourceAsStream(fileName.toString()));
+//}
+//catch (IOException e)
+//{
+//	throw new RuntimeException(e);
+//}
 
-	unicodeTexID[page] = textures->getTexture(image);
-	lastBoundTexture = unicodeTexID[page];
+unicodeTexID[page] = textures->getTexture(image);
+lastBoundTexture = unicodeTexID[page];
 }
 
 void Font::renderUnicodeCharacter(wchar_t c)
 {
-	if (unicodeWidth[c] == 0)
-	{
-		// System.out.println("no-width char " + c);
-		return;
-	}
+if (unicodeWidth[c] == 0)
+{
+// System.out.println("no-width char " + c);
+return;
+}
 
-	int page = c / 256;
+int page = c / 256;
 
-	if (unicodeTexID[page] == 0) loadUnicodePage(page);
+if (unicodeTexID[page] == 0) loadUnicodePage(page);
 
-	if (lastBoundTexture != unicodeTexID[page])
-	{
-		glBindTexture(GL_TEXTURE_2D, unicodeTexID[page]);
-		lastBoundTexture = unicodeTexID[page];
-	}
+if (lastBoundTexture != unicodeTexID[page])
+{
+glBindTexture(GL_TEXTURE_2D, unicodeTexID[page]);
+lastBoundTexture = unicodeTexID[page];
+}
 
-	// first column with non-trans pixels
-	int firstLeft = unicodeWidth[c] >> 4;
-	// last column with non-trans pixels
-	int firstRight = unicodeWidth[c] & 0xF;
+// first column with non-trans pixels
+int firstLeft = unicodeWidth[c] >> 4;
+// last column with non-trans pixels
+int firstRight = unicodeWidth[c] & 0xF;
 
-	float left = firstLeft;
-	float right = firstRight + 1;
+float left = firstLeft;
+float right = firstRight + 1;
 
-	float xOff = c % 16 * 16 + left;
-	float yOff = (c & 0xFF) / 16 * 16;
-	float width = right - left - .02f;
-	
-    Tesselator *t = Tesselator::getInstance();
-	t->begin(GL_TRIANGLE_STRIP);
-	t->tex(xOff / 256.0F, yOff / 256.0F);
-	t->vertex(xPos, yPos, 0.0f);
-	t->tex(xOff / 256.0F, (yOff + 15.98f) / 256.0F);
-	t->vertex(xPos, yPos + 7.99f, 0.0f);
-	t->tex((xOff + width) / 256.0F, yOff / 256.0F);
-	t->vertex(xPos + width / 2, yPos, 0.0f);
-	t->tex((xOff + width) / 256.0F, (yOff + 15.98f) / 256.0F);
-	t->vertex(xPos + width / 2, yPos + 7.99f, 0.0f);
-	t->end();
+float xOff = c % 16 * 16 + left;
+float yOff = (c & 0xFF) / 16 * 16;
+float width = right - left - .02f;
 
-	xPos += (right - left) / 2 + 1;
+Tesselator *t = Tesselator::getInstance();
+t->begin(GL_TRIANGLE_STRIP);
+t->tex(xOff / 256.0F, yOff / 256.0F);
+t->vertex(xPos, yPos, 0.0f);
+t->tex(xOff / 256.0F, (yOff + 15.98f) / 256.0F);
+t->vertex(xPos, yPos + 7.99f, 0.0f);
+t->tex((xOff + width) / 256.0F, yOff / 256.0F);
+t->vertex(xPos + width / 2, yPos, 0.0f);
+t->tex((xOff + width) / 256.0F, (yOff + 15.98f) / 256.0F);
+t->vertex(xPos + width / 2, yPos + 7.99f, 0.0f);
+t->end();
+
+xPos += (right - left) / 2 + 1;
 }
 */
 

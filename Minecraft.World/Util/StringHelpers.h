@@ -6,12 +6,12 @@ std::wstring trimString(const std::wstring& a);
 std::wstring replaceAll(const std::wstring& in, const std::wstring& replace, const std::wstring& with);
 
 bool equalsIgnoreCase(const std::wstring& a, const std::wstring& b);
-// 4J-PB - for use in the ::toString 
+// 4J-PB - for use in the ::toString
 template <class T> std::wstring _toString(T t)
 {
-	std::wostringstream oss;
-	oss << std::dec << t;
-	return oss.str();
+    std::wostringstream oss;
+    oss << std::dec << t;
+    return oss.str();
 }
 template <class T> T _fromString(const std::wstring& s)
 {

@@ -15,9 +15,9 @@ DefaultTexturePack::DefaultTexturePack() : AbstractTexturePack(0, NULL, L"Minecr
 
 void DefaultTexturePack::loadIcon()
 {
-#ifdef _XBOX
-	// 4J Stu - Temporary only	
-	const DWORD LOCATOR_SIZE = 256; // Use this to allocate space to hold a ResourceLocator string 
+	#ifdef _XBOX
+	// 4J Stu - Temporary only
+	const DWORD LOCATOR_SIZE = 256; // Use this to allocate space to hold a ResourceLocator string
 	WCHAR szResourceLocator[ LOCATOR_SIZE ];
 
 	const ULONG_PTR c_ModuleHandle = (ULONG_PTR)GetModuleHandle(NULL);
@@ -26,14 +26,14 @@ void DefaultTexturePack::loadIcon()
 	UINT size = 0;
 	HRESULT hr = XuiResourceLoadAllNoLoc(szResourceLocator, &m_iconData, &size);
 	m_iconSize = size;
-#else
+	#else
 	if(app.hasArchiveFile(L"Graphics\\TexturePackIcon.png"))
 	{
 		byteArray ba = app.getArchiveFile(L"Graphics\\TexturePackIcon.png");
 		m_iconData = ba.data;
 		m_iconSize = ba.length;
 	}
-#endif
+	#endif
 }
 
 void DefaultTexturePack::loadDescription()
@@ -66,16 +66,16 @@ InputStream *DefaultTexturePack::getResourceImplementation(const std::wstring &n
 {
 	std::wstring wDrive = L"";
 	// Make the content package point to to the UPDATE: drive is needed
-#ifdef _XBOX
+	#ifdef _XBOX
 	#ifdef _TU_BUILD
-			wDrive=L"UPDATE:\\res";
+	wDrive=L"UPDATE:\\res";
 	#else
-		
-			wDrive=L"GAME:\\res\\TitleUpdate\\res";
-	#endif
-#elif __PS3__
 
-	char *pchUsrDir;	
+	wDrive=L"GAME:\\res\\TitleUpdate\\res";
+	#endif
+	#elif __PS3__
+
+	char *pchUsrDir;
 	if(app.GetBootedFromDiscPatch())
 	{
 		const char *pchTextureName=wstringtofilename(name);
@@ -93,19 +93,19 @@ InputStream *DefaultTexturePack::getResourceImplementation(const std::wstring &n
 	std::wstring wstr (pchUsrDir, pchUsrDir+strlen(pchUsrDir));
 
 	wDrive = wstr + L"\\Common\\res\\TitleUpdate\\res";
-#elif __PSVITA__
+	#elif __PSVITA__
 
 	/*
-	char *pchUsrDir=getUsrDirPath();
-	std::wstring wstr (pchUsrDir, pchUsrDir+strlen(pchUsrDir));
-	
-	wDrive = wstr + L"Common\\res\\TitleUpdate\\res";
-	*/
+	 *	char *pchUsrDir=getUsrDirPath();
+	 *	std::wstring wstr (pchUsrDir, pchUsrDir+strlen(pchUsrDir));
+	 *
+	 *	wDrive = wstr + L"Common\\res\\TitleUpdate\\res";
+	 */
 	wDrive = L"Common\\res\\TitleUpdate\\res";
-#else
+	#else
 	wDrive = L"Common\\res\\TitleUpdate\\res";
 
-#endif
+	#endif
 	InputStream *resource = InputStream::getResourceAsStream(wDrive + name);
 	//InputStream *stream = DefaultTexturePack::class->getResourceAsStream(name);
 	//if (stream == NULL)
@@ -126,12 +126,12 @@ void DefaultTexturePack::loadUI()
 
 void DefaultTexturePack::unloadUI()
 {
-#ifdef _XBOX
+	#ifdef _XBOX
 	// Unload skin
 	XuiFreeVisuals(L"TexturePack");
 	XuiFreeVisuals(L"");
 	CXuiSceneBase::GetInstance()->SetVisualPrefix(L"");
 	CXuiSceneBase::GetInstance()->SkinChanged(CXuiSceneBase::GetInstance()->m_hObj);
-#endif
+	#endif
 	AbstractTexturePack::unloadUI();
 }

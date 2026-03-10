@@ -4,29 +4,29 @@
 std::wstring TexturePack::getPath(bool bTitleUpdateTexture /*= false*/)
 {
 	std::wstring wDrive;
-#ifdef _XBOX
+	#ifdef _XBOX
 	if(bTitleUpdateTexture)
 	{
 		// Make the content package point to to the UPDATE: drive is needed
-#ifdef _TU_BUILD
+		#ifdef _TU_BUILD
 		wDrive=L"UPDATE:\\";
-#else
+		#else
 
 		wDrive=L"GAME:\\res\\TitleUpdate\\";
-#endif
+		#endif
 	}
 	else
 	{
 		wDrive=L"GAME:\\";
 	}
-#else
+	#else
 
-#ifdef __PS3__
+	#ifdef __PS3__
 
 	// 4J-PB - we need to check for a BD patch - this is going to be an issue for full DLC texture packs (Halloween)
 
 	char *pchUsrDir=getUsrDirPath();
-	
+
 	std::wstring wstr (pchUsrDir, pchUsrDir+strlen(pchUsrDir));
 
 	if(bTitleUpdateTexture)
@@ -37,10 +37,10 @@ std::wstring TexturePack::getPath(bool bTitleUpdateTexture /*= false*/)
 	else
 	{
 		wDrive= wstr + L"/Common/";
-	}			
+	}
 
 
-#elif __PSVITA__
+	#elif __PSVITA__
 	char *pchUsrDir="";//getUsrDirPath();
 	std::wstring wstr (pchUsrDir, pchUsrDir+strlen(pchUsrDir));
 
@@ -52,10 +52,10 @@ std::wstring TexturePack::getPath(bool bTitleUpdateTexture /*= false*/)
 	{
 		wDrive= wstr + L"/Common/";
 	}
-#else
+	#else
 	// same thing as consolesapp
 	std::wstring assetsBase;
-#if defined(__linux__) || defined(__unix__)
+	#if defined(__linux__) || defined(__unix__)
 	{
 		char buf[PATH_MAX];
 		ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
@@ -75,7 +75,7 @@ std::wstring TexturePack::getPath(bool bTitleUpdateTexture /*= false*/)
 			if (cwdCandidate.exists()) assetsBase = L"Minecraft.Assets/";
 		}
 	}
-#endif
+	#endif
 
 	if (!assetsBase.empty()) {
 		if (bTitleUpdateTexture) wDrive = assetsBase + L"Common/res/TitleUpdate/";
@@ -91,8 +91,8 @@ std::wstring TexturePack::getPath(bool bTitleUpdateTexture /*= false*/)
 			wDrive=L"Common/";
 		}
 	}
-#endif
-#endif
+	#endif
+	#endif
 
 	return wDrive;
 }

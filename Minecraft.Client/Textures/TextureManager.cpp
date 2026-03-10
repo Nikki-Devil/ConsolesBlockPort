@@ -101,7 +101,7 @@ std::vector<Texture *> *TextureManager::createTextures(const std::wstring &filen
 	}
 	else
 	{
-#ifdef __PS3__
+		#ifdef __PS3__
 		if(app.GetBootedFromDiscPatch())
 		{
 			const char *pchTextureName=wstringtofilename(filename);
@@ -110,7 +110,7 @@ std::vector<Texture *> *TextureManager::createTextures(const std::wstring &filen
 			drive= wstr + L"\\Common\\res\\TitleUpdate\\";
 		}
 		else
-#endif		
+			#endif
 		{
 			drive = Minecraft::GetInstance()->skins->getDefault()->getPath(true);
 		}
@@ -131,10 +131,10 @@ std::vector<Texture *> *TextureManager::createTextures(const std::wstring &filen
 		int frameWidth = width;
 		int frameHeight = width;
 
-		// avoid x/0 and 0/0 and similar nonsense 
+		// avoid x/0 and 0/0 and similar nonsense
 		if (frameWidth <= 0 || frameHeight <= 0)
 		{
-				app.DebugPrintf("TextureManager.createTextures - invalid frame dimensions %d x %d for %s\n", frameWidth, frameHeight, wstringtofilename(filename));
+			app.DebugPrintf("TextureManager.createTextures - invalid frame dimensions %d x %d for %s\n", frameWidth, frameHeight, wstringtofilename(filename));
 			// erm wattesigma
 			if (width == height)
 			{
@@ -142,9 +142,9 @@ std::vector<Texture *> *TextureManager::createTextures(const std::wstring &filen
 			}
 			else
 			{
-#ifndef _CONTENT_PACKAGE
+				#ifndef _CONTENT_PACKAGE
 				wprintf(L"TextureManager.createTextures: Skipping %ls because of invalid animation frame size\n", filename.c_str());
-#endif
+				#endif
 			}
 		}
 		else
@@ -170,9 +170,9 @@ std::vector<Texture *> *TextureManager::createTextures(const std::wstring &filen
 		else
 		{
 			//Minecraft.getInstance().getLogger().warning("TextureManager.createTexture: Skipping " + filename + " because of broken aspect ratio and not animation");
-#ifndef _CONTENT_PACKAGE
+			#ifndef _CONTENT_PACKAGE
 			wprintf(L"TextureManager.createTexture: Skipping %ls because of broken aspect ratio and not animation\n", filename.c_str());
-#endif
+			#endif
 		}
 	}
 	delete image;

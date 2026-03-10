@@ -41,9 +41,9 @@ std::wstring AbstractTexturePack::trim(std::wstring line)
 
 void AbstractTexturePack::loadIcon()
 {
-#ifdef _XBOX
-	// 4J Stu - Temporary only	
-	const DWORD LOCATOR_SIZE = 256; // Use this to allocate space to hold a ResourceLocator string 
+	#ifdef _XBOX
+	// 4J Stu - Temporary only
+	const DWORD LOCATOR_SIZE = 256; // Use this to allocate space to hold a ResourceLocator string
 	WCHAR szResourceLocator[ LOCATOR_SIZE ];
 
 	const ULONG_PTR c_ModuleHandle = (ULONG_PTR)GetModuleHandle(NULL);
@@ -52,14 +52,14 @@ void AbstractTexturePack::loadIcon()
 	UINT size = 0;
 	HRESULT hr = XuiResourceLoadAllNoLoc(szResourceLocator, &m_iconData, &size);
 	m_iconSize = size;
-#endif
+	#endif
 }
 
 void AbstractTexturePack::loadComparison()
 {
-#ifdef _XBOX
-	// 4J Stu - Temporary only	
-	const DWORD LOCATOR_SIZE = 256; // Use this to allocate space to hold a ResourceLocator string 
+	#ifdef _XBOX
+	// 4J Stu - Temporary only
+	const DWORD LOCATOR_SIZE = 256; // Use this to allocate space to hold a ResourceLocator string
 	WCHAR szResourceLocator[ LOCATOR_SIZE ];
 
 	const ULONG_PTR c_ModuleHandle = (ULONG_PTR)GetModuleHandle(NULL);
@@ -68,13 +68,13 @@ void AbstractTexturePack::loadComparison()
 	UINT size = 0;
 	HRESULT hr = XuiResourceLoadAllNoLoc(szResourceLocator, &m_comparisonData, &size);
 	m_comparisonSize = size;
-#endif
+	#endif
 }
 
 void AbstractTexturePack::loadDescription()
 {
 	// 4J Unused currently
-#if 0
+	#if 0
 	InputStream *inputStream = NULL;
 	BufferedReader *br = NULL;
 	//try {
@@ -88,53 +88,53 @@ void AbstractTexturePack::loadDescription()
 	//	try {
 	if (br != NULL)
 	{
-		br->close();
-		delete br;
-	}
-	if (inputStream != NULL)
-	{
-		inputStream->close();
-		delete inputStream;
-	}
-	//	} catch (IOException ignored) {
-	//	}
-	//}
+	br->close();
+	delete br;
+}
+if (inputStream != NULL)
+{
+inputStream->close();
+delete inputStream;
+}
+//	} catch (IOException ignored) {
+//	}
+//}
 #endif
-		// try to locate the colours.col file in Minecraft.Assets relative to the executable thank u.
-		bool loaded = false;
+// try to locate the colours.col file in Minecraft.Assets relative to the executable thank u.
+bool loaded = false;
 #if defined(__linux__) || defined(__unix__)
-		char buf[PATH_MAX];
-		ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
-		if (len != -1) {
-			buf[len] = '\0';
-			std::string exePath(buf);
-			size_t pos = exePath.find_last_of('/');
-			std::string exeDir = (pos == std::string::npos) ? exePath : exePath.substr(0, pos);
-			std::wstring candidate = convStringToWstring(exeDir) + L"/../../Minecraft.Assets/Common/res/TitleUpdate/res/colours.col";
-			File candidateFile(candidate);
-			if (candidateFile.exists()) {
-				DWORD dwLength = candidateFile.length();
-				byteArray data(dwLength);
-				FileInputStream fis(candidateFile);
-				fis.read(data, 0, dwLength);
-				fis.close();
-				if (m_colourTable != NULL) delete m_colourTable;
-				m_colourTable = new ColourTable(data.data, dwLength);
-				delete [] data.data;
-				loaded = true;
-			}
-		}
+char buf[PATH_MAX];
+ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
+if (len != -1) {
+	buf[len] = '\0';
+	std::string exePath(buf);
+	size_t pos = exePath.find_last_of('/');
+	std::string exeDir = (pos == std::string::npos) ? exePath : exePath.substr(0, pos);
+	std::wstring candidate = convStringToWstring(exeDir) + L"/../../Minecraft.Assets/Common/res/TitleUpdate/res/colours.col";
+	File candidateFile(candidate);
+	if (candidateFile.exists()) {
+		DWORD dwLength = candidateFile.length();
+		byteArray data(dwLength);
+		FileInputStream fis(candidateFile);
+		fis.read(data, 0, dwLength);
+		fis.close();
+		if (m_colourTable != NULL) delete m_colourTable;
+		m_colourTable = new ColourTable(data.data, dwLength);
+		delete [] data.data;
+		loaded = true;
+	}
+}
 #endif
 
-		if (!loaded) {
-			app.DebugPrintf("Failed to load the default colours table\n");
-			// create a safe default colour table so callers can continue without crashing
-			if(m_colourTable != NULL) delete m_colourTable;
-			m_colourTable = new ColourTable();
-		}
+if (!loaded) {
+	app.DebugPrintf("Failed to load the default colours table\n");
+	// create a safe default colour table so callers can continue without crashing
+	if(m_colourTable != NULL) delete m_colourTable;
+	m_colourTable = new ColourTable();
+}
 
-		app.FatalLoadError();
-	}
+app.FatalLoadError();
+}
 
 void AbstractTexturePack::loadName()
 {
@@ -231,12 +231,12 @@ std::wstring AbstractTexturePack::getAnimationString(const std::wstring &texture
 	InputStream *fileStream = getResource(L"\\" + path + animationDefinitionFile, requiresFallback);
 
 	//Minecraft::getInstance()->getLogger().info("Found animation info for: " + animationDefinitionFile);
-#ifndef _CONTENT_PACKAGE
+	#ifndef _CONTENT_PACKAGE
 	wprintf(L"Found animation info for: %ls\n", animationDefinitionFile.c_str() );
-#endif
+	#endif
 	InputStreamReader isr(fileStream);
 	BufferedReader br(&isr);
-	
+
 	std::wstring result = L"";
 
 	std::wstring line = br.readLine();
@@ -267,23 +267,23 @@ BufferedImage *AbstractTexturePack::getImageResource(const std::wstring& File, b
 
 void AbstractTexturePack::loadDefaultUI()
 {
-#ifdef _XBOX
+	#ifdef _XBOX
 	// load from the .xzp file
 	const ULONG_PTR c_ModuleHandle = (ULONG_PTR)GetModuleHandle(NULL);
 
 	// Load new skin
-	const DWORD LOCATOR_SIZE = 256; // Use this to allocate space to hold a ResourceLocator string 
+	const DWORD LOCATOR_SIZE = 256; // Use this to allocate space to hold a ResourceLocator string
 	WCHAR szResourceLocator[ LOCATOR_SIZE ];
 
 	swprintf(szResourceLocator, LOCATOR_SIZE,L"section://%X,%ls#%ls",c_ModuleHandle,L"media", L"media/skin_Minecraft.xur");
-	
+
 	XuiFreeVisuals(L"");
 	app.LoadSkin(szResourceLocator,NULL);//L"TexturePack");
 	//CXuiSceneBase::GetInstance()->SetVisualPrefix(L"TexturePack");
 	CXuiSceneBase::GetInstance()->SkinChanged(CXuiSceneBase::GetInstance()->m_hObj);
-#else
+	#else
 	ui.ReloadSkin();
-#endif
+	#endif
 }
 
 void AbstractTexturePack::loadColourTable()
@@ -322,14 +322,14 @@ void AbstractTexturePack::loadDefaultColourTable()
 
 void AbstractTexturePack::loadDefaultHTMLColourTable()
 {
-#ifdef _XBOX
+	#ifdef _XBOX
 	// load from the .xzp file
 	const ULONG_PTR c_ModuleHandle = (ULONG_PTR)GetModuleHandle(NULL);
 
-	const DWORD LOCATOR_SIZE = 256; // Use this to allocate space to hold a ResourceLocator string 
+	const DWORD LOCATOR_SIZE = 256; // Use this to allocate space to hold a ResourceLocator string
 	WCHAR szResourceLocator[ LOCATOR_SIZE ];
 
-	// Try and load the HTMLColours.col based off the common XML first, before the deprecated xuiscene_colourtable	
+	// Try and load the HTMLColours.col based off the common XML first, before the deprecated xuiscene_colourtable
 	wsprintfW(szResourceLocator,L"section://%X,%s#%s",c_ModuleHandle,L"media", L"media/HTMLColours.col");
 	BYTE *data;
 	UINT dataLength;
@@ -350,7 +350,7 @@ void AbstractTexturePack::loadDefaultHTMLColourTable()
 			loadHTMLColourTableFromXuiScene(hScene);
 		}
 	}
-#else
+	#else
 	if(app.hasArchiveFile(L"HTMLColours.col"))
 	{
 		byteArray textColours = app.getArchiveFile(L"HTMLColours.col");
@@ -358,7 +358,7 @@ void AbstractTexturePack::loadDefaultHTMLColourTable()
 
 		delete [] textColours.data;
 	}
-#endif
+	#endif
 }
 
 #ifdef _XBOX
@@ -395,10 +395,10 @@ void AbstractTexturePack::loadHTMLColourTableFromXuiScene(HXUIOBJ hObj)
 void AbstractTexturePack::loadUI()
 {
 	loadColourTable();
-	
-#ifdef _XBOX
+
+	#ifdef _XBOX
 	CXuiSceneBase::GetInstance()->SkinChanged(CXuiSceneBase::GetInstance()->m_hObj);
-#endif
+	#endif
 }
 
 void AbstractTexturePack::unloadUI()
@@ -411,7 +411,7 @@ std::wstring AbstractTexturePack::getXuiRootPath()
 	const ULONG_PTR c_ModuleHandle = (ULONG_PTR)GetModuleHandle(NULL);
 
 	// Load new skin
-	const DWORD LOCATOR_SIZE = 256; // Use this to allocate space to hold a ResourceLocator string 
+	const DWORD LOCATOR_SIZE = 256; // Use this to allocate space to hold a ResourceLocator string
 	WCHAR szResourceLocator[ LOCATOR_SIZE ];
 
 	swprintf(szResourceLocator, LOCATOR_SIZE,L"section://%X,%ls#%ls",c_ModuleHandle,L"media", L"media/");

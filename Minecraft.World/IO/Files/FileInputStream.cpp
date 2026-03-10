@@ -23,19 +23,19 @@ extern CConsoleMinecraftApp app;
 FileInputStream::FileInputStream(const File &file)
 {
 	const char *pchFilename=wstringtofilename(file.getPath());
-#ifdef _UNICODE
+	#ifdef _UNICODE
 	m_fileHandle = CreateFile(
 		file.getPath().c_str(), // file name
-		GENERIC_READ, // access mode
-		0, // share mode // TODO 4J Stu - Will we need to share file? Probably not but...
-		NULL, // Unused
-		OPEN_EXISTING , // how to create // TODO 4J Stu - Assuming that the file already exists if we are opening to read from it
-		FILE_FLAG_SEQUENTIAL_SCAN, // file attributes
-		NULL // Unsupported
-		);
-#elif defined(__linux__)
+							  GENERIC_READ, // access mode
+						   0, // share mode // TODO 4J Stu - Will we need to share file? Probably not but...
+						   NULL, // Unused
+						   OPEN_EXISTING , // how to create // TODO 4J Stu - Assuming that the file already exists if we are opening to read from it
+						   FILE_FLAG_SEQUENTIAL_SCAN, // file attributes
+						   NULL // Unsupported
+	);
+	#elif defined(__linux__)
 	m_fileHandle = (HANDLE)(intptr_t)open(pchFilename, O_RDONLY);
-#else
+	#else
 	m_fileHandle = CreateFile(
 		pchFilename, // file name
 		GENERIC_READ, // access mode
@@ -44,8 +44,8 @@ FileInputStream::FileInputStream(const File &file)
 		OPEN_EXISTING , // how to create // TODO 4J Stu - Assuming that the file already exists if we are opening to read from it
 		FILE_FLAG_SEQUENTIAL_SCAN, // file attributes
 		NULL // Unsupported
-		);
-#endif
+	);
+	#endif
 
 	if( m_fileHandle == INVALID_HANDLE_VALUE )
 	{
@@ -58,11 +58,11 @@ FileInputStream::FileInputStream(const File &file)
 FileInputStream::~FileInputStream()
 {
 	if( m_fileHandle != INVALID_HANDLE_VALUE )
-#ifndef __linux__
+		#ifndef __linux__
 		CloseHandle( m_fileHandle );
-#else
-		::close( (int)(intptr_t)m_fileHandle );
-#endif
+	#else
+	::close( (int)(intptr_t)m_fileHandle );
+	#endif
 }
 
 #if defined(__linux__)
@@ -133,7 +133,7 @@ int FileInputStream::read(byteArray b)
 		b.length, // number of bytes to read
 		&numberOfBytesRead, // number of bytes read
 		NULL // overlapped buffer
-		);
+	);
 
 	if( bSuccess==FALSE )
 	{
@@ -175,7 +175,7 @@ int FileInputStream::read(byteArray b, unsigned int offset, unsigned int length)
 		length, // number of bytes to read
 		&numberOfBytesRead, // number of bytes read
 		NULL // overlapped buffer
-		);
+	);
 
 	if( bSuccess==FALSE )
 	{
@@ -200,8 +200,8 @@ void FileInputStream::close()
 	{
 		//printf("\n\nFileInputStream::close - TRYING TO CLOSE AN INVALID FILE HANDLE\n\n");
 		return;
-	}	
-	
+	}
+
 	int result = ::close( (int)(intptr_t)m_fileHandle );
 
 	if( result == 0 )
@@ -223,7 +223,7 @@ void FileInputStream::close()
 //the actual number of bytes skipped.
 __int64 FileInputStream::skip(__int64 n)
 {
-#ifdef _XBOX
+	#ifdef _XBOX
 	LARGE_INTEGER li;
 	li.QuadPart = n;
 	li.LowPart = SetFilePointer(m_fileHandle, li.LowPart, &li.HighPart, FILE_CURRENT);
@@ -234,7 +234,7 @@ __int64 FileInputStream::skip(__int64 n)
 	}
 
 	return li.QuadPart;
-#else
+	#else
 	return 0;
-#endif
+	#endif
 }

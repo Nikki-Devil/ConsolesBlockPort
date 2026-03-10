@@ -67,11 +67,11 @@ const char *wstringtofilename(const std::wstring& name)
 	for(unsigned int i = 0; i < name.length(); i++ )
 	{
 		wchar_t c = name[i];
-#if defined __PS3__ || defined __ORBIS__ || defined __linux__
+		#if defined __PS3__ || defined __ORBIS__ || defined __linux__
 		if(c=='\\') c='/';
-#else
+		#else
 		if(c=='/') c='\\';
-#endif
+		#endif
 		assert(c<128);	// Will we have to do any conversion of non-ASCII characters in filenames?
 		buf[i] = (char)c;
 	}
@@ -86,20 +86,20 @@ std::wstring filenametowstring(const char *name)
 
 std::vector<std::wstring> &stringSplit(const std::wstring &s, wchar_t delim, std::vector<std::wstring> &elems)
 {
-    std::wstringstream ss(s);
-    std::wstring item;
-    while(std::getline(ss, item, delim))
+	std::wstringstream ss(s);
+	std::wstring item;
+	while(std::getline(ss, item, delim))
 	{
-        elems.push_back(item);
-    }
-    return elems;
+		elems.push_back(item);
+	}
+	return elems;
 }
 
 
 std::vector<std::wstring> stringSplit(const std::wstring &s, wchar_t delim)
 {
-    std::vector<std::wstring> elems;
-    return stringSplit(s, delim, elems);
+	std::vector<std::wstring> elems;
+	return stringSplit(s, delim, elems);
 }
 
 bool BothAreSpaces(wchar_t lhs, wchar_t rhs) { return (lhs == rhs) && (lhs == L' '); }
@@ -108,7 +108,7 @@ void stripWhitespaceForHtml(std::wstring &string, bool bRemoveNewline)
 {
 	// Strip newline chars
 	if(bRemoveNewline)
-	{	
+	{
 		string.erase(std::remove(string.begin(), string.end(), '\n'), string.end());
 		string.erase(std::remove(string.begin(), string.end(), '\r'), string.end());
 	}
@@ -116,7 +116,7 @@ void stripWhitespaceForHtml(std::wstring &string, bool bRemoveNewline)
 	string.erase(std::remove(string.begin(), string.end(), '\t'), string.end());
 
 	// Strip duplicate spaces
-	string.erase(std::unique(string.begin(), string.end(), BothAreSpaces), string.end()); 
+	string.erase(std::unique(string.begin(), string.end(), BothAreSpaces), string.end());
 
 	string = trimString(string);
 }

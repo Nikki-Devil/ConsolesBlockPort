@@ -35,7 +35,7 @@ const wchar_t *ColourTable::ColourTableElements[eMinecraftColour_COUNT] =
 	L"Foliage_ExtremeHillsEdge",
 	L"Foliage_Jungle",
 	L"Foliage_JungleHills",
-	
+
 	L"Grass_Common",
 	L"Grass_Ocean",
 	L"Grass_Plains",
@@ -181,7 +181,7 @@ const wchar_t *ColourTable::ColourTableElements[eMinecraftColour_COUNT] =
 
 	L"Particle_CritStart", // arrow in air
 	L"Particle_CritEnd", // arrow in air
-	
+
 	L"Effect_MovementSpeed",
 	L"Effect_MovementSlowDown",
 	L"Effect_DigSpeed",
@@ -262,7 +262,7 @@ const wchar_t *ColourTable::ColourTableElements[eMinecraftColour_COUNT] =
 
 	L"Sign_Text",
 	L"Map_Text",
-	
+
 	L"HTMLColor_0",
 	L"HTMLColor_1",
 	L"HTMLColor_2",
