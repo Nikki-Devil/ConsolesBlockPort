@@ -777,11 +777,14 @@ void GameRenderer::renderItemInHand(float a, int eye)
 	{
 		if (!mc->options->hideGui && !mc->gameMode->isCutScene()) 
 		{
-			turnOnLightLayer(a);
+			//turnOnLightLayer(a); // 4jcraft: disable light layer on handrenderer similarly to how it was done on the chunk render (this makes the hand look proper)
 			PIXBeginNamedEvent(0,"Item in hand render");
-			itemInHandRenderer->render(a);
+			// 4jcraft: add null pointer check to itemInHandRenderer to prevent a occasional seg fault
+			if (itemInHandRenderer != nullptr) {
+				itemInHandRenderer->render(a);
+			}
 			PIXEndNamedEvent();
-			turnOffLightLayer(a);
+			//turnOffLightLayer(a); // 4jcraft: disable light layer on handrenderer similarly to how it was done on the chunk render (this makes the hand look proper)
 		}
 	}
 	glPopMatrix();
@@ -789,7 +792,10 @@ void GameRenderer::renderItemInHand(float a, int eye)
 	//if (!mc->options->thirdPersonView && !mc->cameraTargetPlayer->isSleeping())
 	if (!localplayer->ThirdPersonView() && !mc->cameraTargetPlayer->isSleeping())
 	{
-		itemInHandRenderer->renderScreenEffect(a);
+		// 4jcraft: add null pointer check to itemInHandRenderer to prevent a occasional seg fault
+		if (itemInHandRenderer != nullptr) {
+			itemInHandRenderer->renderScreenEffect(a);
+		}
 		bobHurt(a);
 	}
 	// 4J-PB - changing this to be per player
@@ -1004,7 +1010,6 @@ int GameRenderer::getLightTexture(int iPad, Level *level)
 
 void GameRenderer::render(float a, bool bFirst)
 {
-	a = 1; // juiceydev made this amazing line of code
 	if( _updateLightTexture && bFirst) updateLightTexture(a);
 	if (Display::isActive())
 	{
@@ -1073,7 +1078,7 @@ void GameRenderer::render(float a, bool bFirst)
 
 	if (mc->level != NULL)
 	{
-		if (mc->options->framerateLimit == 0)
+		if (maxFps == 0)
 		{
 			renderLevel(a, 0);
 		}
